@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState } from 'react';
+import SearchForm from './components/SearchForm';
+import Results from './components/Results';
+import axios from 'axios';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [journeys, setJourneys] = useState([]);
+
+    const fetchJourneys = async ({ from, to }) => {
+        try {
+            const response = await axios.get('/api/search', {
+                params: { from, to },
+            });
+            setJourneys(response.data);
+        } catch (error) {
+            console.error('Error fetching journeys:', error);
+        }
+    };
+
+    return (
+        <div>
+            <h1>Travel Planner</h1>
+            <SearchForm onSearch={fetchJourneys} />
+            <Results journeys={journeys} />
+        </div>
+    );
+};
 
 export default App;
